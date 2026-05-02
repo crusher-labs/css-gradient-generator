@@ -27,4 +27,4 @@ A visual web tool to create, customize, and copy linear CSS gradients in real-ti
 ## **Live Tool**
 
 You can access the live tool here:
-👉 [**CSS Gradient Generator**](https://itxcrusher.github.io/css-gradient-generator/)
+👉 [**CSS Gradient Generator**](https://crusher-labs.github.io/css-gradient-generator/)

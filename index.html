@@ -1,245 +1,177 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full" data-theme="minimal" data-theme-lock="minimal" data-mode="light">
+<html lang="en"
+      data-default-theme="minimal"
+      data-theme-lock="minimal"
+      data-default-mode="light"
+      data-default-brand="#0ea5e9">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CSS Gradient Generator</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-        }
-    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/crusher-ui-kit@0.1.6/dist/crusher-ui.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/crusher-ui-kit@0.1.6/dist/themes/minimal.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/crusher-ui-kit@0.1.6/dist/static/tool-shell.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/crusher-ui-kit@0.1.6/dist/static/tool-shell.js"></script>
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
+        body { font-family: 'Inter', sans-serif; }
+
+        .tool-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+            gap: var(--crusher-spacing-8);
+            max-width: 56rem;
+            margin-inline: auto;
         }
-        /* Custom styles for the range slider */
-        input[type="range"] {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 100%;
-            height: 8px;
-            background: #e2e8f0; /* slate-200 */
-            border-radius: 5px;
-            outline: none;
+        .tool-section { padding: var(--crusher-spacing-6); }
+        .tool-section h2 {
+            margin: 0 0 var(--crusher-spacing-4);
+            font-size: var(--crusher-font-size-xl);
+            color: var(--crusher-text-primary);
         }
-        .dark input[type="range"] {
-            background: #475569; /* slate-600 */
+        .tool-block { margin-bottom: var(--crusher-spacing-6); }
+        .tool-label {
+            display: block;
+            margin-bottom: var(--crusher-spacing-2);
+            font-size: var(--crusher-font-size-sm);
+            font-weight: 500;
+            color: var(--crusher-text-secondary);
         }
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 20px;
-            height: 20px;
-            background: #38bdf8; /* sky-400 */
+
+        .tool-colors { display: grid; gap: var(--crusher-spacing-3); }
+        .tool-color-stop { display: flex; align-items: center; gap: var(--crusher-spacing-3); }
+        .tool-color-swatch {
+            inline-size: 3rem; block-size: 3rem;
+            border: none; padding: 0;
+            border-radius: var(--crusher-radius-md);
             cursor: pointer;
-            border-radius: 50%;
-            border: 2px solid #ffffff; /* white */
+            background: transparent;
         }
-        .dark input[type="range"]::-webkit-slider-thumb {
-            border: 2px solid #0f172a; /* slate-900 */
+        .tool-color-swatch::-webkit-color-swatch { border-radius: var(--crusher-radius-md); border: 2px solid var(--crusher-border-primary); }
+        .tool-color-swatch::-moz-color-swatch { border-radius: var(--crusher-radius-md); border: 2px solid var(--crusher-border-primary); }
+        .tool-color-hex { flex-grow: 1; padding: var(--crusher-spacing-2) var(--crusher-spacing-3); }
+        .tool-color-remove {
+            background: transparent; border: 0; padding: var(--crusher-spacing-2);
+            color: var(--crusher-text-secondary); cursor: pointer; line-height: 0;
+            border-radius: var(--crusher-radius-md);
         }
-        input[type="range"]::-moz-range-thumb {
-            width: 20px;
-            height: 20px;
-            background: #38bdf8; /* sky-400 */
-            cursor: pointer;
-            border-radius: 50%;
-            border: 2px solid #ffffff; /* white */
+        .tool-color-remove:hover { color: var(--crusher-color-brand-primary); }
+        .tool-color-remove[hidden] { visibility: hidden; }
+
+        .tool-add-btn {
+            margin-top: var(--crusher-spacing-3);
+            inline-size: 100%;
+            padding: var(--crusher-spacing-2) var(--crusher-spacing-4);
+            font-size: var(--crusher-font-size-sm); font-weight: 600;
         }
-        .dark input[type="range"]::-moz-range-thumb {
-             border: 2px solid #0f172a; /* slate-900 */
+
+        .tool-angle-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--crusher-spacing-2); }
+        .tool-angle-row .tool-label { margin-bottom: 0; }
+        .tool-angle-slider { inline-size: 100%; }
+        .tool-angle-value {
+            font-size: var(--crusher-font-size-sm); font-family: monospace;
+            padding: var(--crusher-spacing-1) var(--crusher-spacing-2);
+            border-radius: var(--crusher-radius-md);
+            background: var(--crusher-background-muted);
+            color: var(--crusher-text-primary);
         }
-        /* Style for color inputs */
-        input[type="color"] {
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            appearance: none;
-            width: 48px;
-            height: 48px;
-            border: none;
-            cursor: pointer;
-            background-color: transparent;
-            padding: 0;
+
+        .tool-code-wrap { position: relative; }
+        textarea.crusher-tool-control {
+            min-block-size: 7rem;
+            padding: var(--crusher-spacing-3) calc(var(--crusher-spacing-3) + 2rem) var(--crusher-spacing-3) var(--crusher-spacing-3);
+            font-family: monospace; font-size: var(--crusher-font-size-sm); resize: none;
         }
-        input[type="color"]::-webkit-color-swatch {
-            border-radius: 8px;
-            border: 2px solid #e2e8f0; /* slate-200 */
+        .tool-copy-btn {
+            position: absolute; inset-block-start: var(--crusher-spacing-2); inset-inline-end: var(--crusher-spacing-2);
+            background: transparent; border: 0; padding: var(--crusher-spacing-1);
+            color: var(--crusher-text-secondary); cursor: pointer; line-height: 0;
+            border-radius: var(--crusher-radius-md);
         }
-        .dark input[type="color"]::-webkit-color-swatch {
-            border: 2px solid #475569; /* slate-600 */
+        .tool-copy-btn:hover { color: var(--crusher-color-brand-primary); }
+        .tool-copy-feedback {
+            position: absolute; inset-block-end: var(--crusher-spacing-2); inset-inline-end: var(--crusher-spacing-2);
+            font-size: var(--crusher-font-size-xs); color: var(--crusher-color-brand-primary);
         }
-        input[type="color"]::-moz-color-swatch {
-            border-radius: 8px;
-            border: 2px solid #e2e8f0; /* slate-200 */
-        }
-        .dark input[type="color"]::-moz-color-swatch {
-            border: 2px solid #475569; /* slate-600 */
-        }
-        #hub-bubble {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            z-index: 1000;
-            width: 56px;
-            height: 56px;
-            background-color: #0ea5e9; /* sky-500 */
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-            transition: transform 0.2s ease-in-out, background-color 0.2s ease-in-out;
-        }
-        #hub-bubble:hover {
-            transform: scale(1.1);
-            background-color: #0284c7; /* sky-600 */
+
+        #gradient-preview {
+            inline-size: 100%;
+            min-block-size: 16rem;
+            border: 2px solid var(--crusher-border-primary);
+            border-radius: var(--crusher-radius-xl);
+            box-shadow: var(--crusher-shadow-lg);
+            transition: background var(--crusher-motion-duration-fast) var(--crusher-motion-easing-standard);
         }
     </style>
-     <script>
-        // On page load or when changing themes, best to add inline in `head` to avoid FOUC
-        if ((() => { try { const prefs = JSON.parse(localStorage.getItem('crusher_prefs') || '{}'); return localStorage.getItem('crusher_tools_mode_contract') === 'style-switcher-v3' && prefs.mode === 'dark'; } catch { return false; } })()) {
-          document.documentElement.classList.add('dark'); document.documentElement.setAttribute('data-mode', 'dark')
-        } else {
-          document.documentElement.classList.remove('dark'); document.documentElement.setAttribute('data-mode', 'light')
-        }
-    </script>
-    <!-- Crusher UI Kit: published static contract -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/crusher-ui-kit@0.1.3/dist/crusher-ui.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/crusher-ui-kit@0.1.3/dist/themes/minimal.css">
-    <style id="crusher-tools-framework-bridge">
-        :root {
-            --crusher-style-switcher-top: var(--crusher-spacing-6);
-            --crusher-style-switcher-width: 16.5rem;
-            --crusher-style-switcher-bg: color-mix(in srgb, var(--crusher-background-surface) 94%, transparent);
-            --crusher-style-switcher-shadow: var(--crusher-shadow-xl);
-            --crusher-style-switcher-icon-shadow: var(--crusher-shadow-md);
-            --crusher-style-switcher-color-gap: var(--crusher-spacing-2);
-            --crusher-style-switcher-color-justify: flex-start;
-        }
-        html[data-mode="dark"] { color-scheme: dark; }
-                #theme-toggle { display: none !important; }
-        body {
-            background:
-                radial-gradient(circle at top left, color-mix(in srgb, var(--crusher-color-brand-primary) 14%, transparent), transparent 28rem),
-                var(--crusher-background-canvas) !important;
-            color: var(--crusher-text-primary) !important;
-        }
-        h1, h2, h3 { color: var(--crusher-text-primary) !important; }
-        p, label, .text-slate-400, .text-slate-500, .text-slate-600, .dark\:text-slate-400, .dark\:text-slate-500 {
-            color: var(--crusher-text-secondary) !important;
-        }
-        .text-sky-400, .text-sky-500, .dark\:text-sky-400,
-        a:not(.tool-card):not(#hub-bubble) {
-            color: var(--crusher-color-brand-primary) !important;
-        }
-        .tool-card,
-        main.bg-white,
-        .bg-white,
-        .bg-slate-50,
-        .bg-slate-100,
-        .dark .dark\:bg-slate-700,
-        .dark .dark\:bg-slate-800 {
-            background-color: var(--crusher-background-surface) !important;
-            border-color: var(--crusher-border-primary) !important;
-            box-shadow: var(--crusher-shadow-lg) !important;
-        }
-        input, textarea, select,
-        .dark .dark\:bg-slate-700:is(input, textarea, select) {
-            background-color: var(--crusher-background-muted) !important;
-            color: var(--crusher-text-primary) !important;
-            border-color: var(--crusher-border-primary) !important;
-        }
-        input:focus, textarea:focus, select:focus {
-            border-color: var(--crusher-color-brand-primary) !important;
-            box-shadow: 0 0 0 var(--crusher-focus-width) color-mix(in srgb, var(--crusher-color-brand-primary) 26%, transparent) !important;
-        }
-        button:not(#theme-toggle):not(.style-switcher-toggler):not(.day-night):not(.swatch):not(.dialect-btn),
-        .case-btn {
-            background-color: color-mix(in srgb, var(--crusher-color-brand-primary) 12%, var(--crusher-background-surface)) !important;
-            color: var(--crusher-text-primary) !important;
-            border-color: color-mix(in srgb, var(--crusher-color-brand-primary) 28%, var(--crusher-border-primary)) !important;
-        }
-        button:not(#theme-toggle):not(.style-switcher-toggler):not(.day-night):not(.swatch):not(.dialect-btn):hover,
-        .case-btn:hover,
-        .tool-card:hover {
-            background-color: color-mix(in srgb, var(--crusher-color-brand-primary) 18%, var(--crusher-background-surface)) !important;
-            border-color: var(--crusher-color-brand-primary) !important;
-        }
-        #hub-bubble {
-            background-color: var(--crusher-color-brand-primary) !important;
-            box-shadow: var(--crusher-shadow-lg) !important;
-        }
-        #hub-bubble:hover {
-            background-color: color-mix(in srgb, var(--crusher-color-brand-primary) 82%, black) !important;
-            transform: translateY(-2px) scale(1.03) !important;
-        }
-</style>
 </head>
-<body class="bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-200 flex flex-col items-center justify-center min-h-screen p-4 antialiased transition-colors duration-300">
+<body class="crusher-tool-page">
 
-    <!-- Theme Toggle Button -->
-    <div class="absolute top-4 right-4 sm:top-6 sm:right-6 z-10">
-        <button id="theme-toggle" type="button" title="Toggle light/dark mode" class="bg-white dark:bg-slate-800 p-3 rounded-full text-slate-500 dark:text-slate-400 hover:text-sky-500 dark:hover:text-sky-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors duration-200 shadow-md">
-            <svg id="theme-toggle-sun-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sun hidden"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
-            <svg id="theme-toggle-moon-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-moon hidden"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
-        </button>
-    </div>
-
-    <div class="w-full max-w-4xl mx-auto">
-        <header class="text-center mb-8">
-            <h1 class="text-3xl font-bold text-slate-900 dark:text-white">CSS Gradient Generator</h1>
-            <p class="text-slate-600 dark:text-slate-400 mt-2">Create and customize beautiful gradients with ease.</p>
+    <main class="crusher-tool-shell">
+        <header class="crusher-tool-header">
+            <h1 class="crusher-tool-title">CSS Gradient Generator</h1>
+            <p class="crusher-tool-lede">Create and customize beautiful gradients with ease.</p>
         </header>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <!-- Controls Panel -->
-            <div class="bg-white dark:bg-slate-800 rounded-xl shadow-xl dark:shadow-2xl border border-slate-200 dark:border-slate-700 p-6">
-                <h2 class="text-xl font-semibold mb-4 text-slate-900 dark:text-white">Controls</h2>
-                
-                <!-- Colors -->
-                <div class="mb-6">
-                    <label class="block text-sm font-medium text-slate-500 dark:text-slate-400 mb-2">Colors</label>
-                    <div id="colors-container" class="space-y-3">
-                        <!-- Color stop templates are added here by JS -->
-                    </div>
-                    <button id="add-color" class="mt-3 w-full text-sm bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-sky-500 dark:text-sky-400 font-semibold py-2 px-4 rounded-md transition-colors">
-                        + Add Color
-                    </button>
+        <div class="tool-grid">
+            <section class="crusher-tool-surface tool-section">
+                <h2>Controls</h2>
+
+                <div class="tool-block">
+                    <label class="tool-label">Colors</label>
+                    <div id="colors-container" class="tool-colors"></div>
+                    <button id="add-color" type="button" class="crusher-tool-action tool-add-btn">+ Add Color</button>
                 </div>
 
-                <!-- Angle -->
-                <div class="mb-6">
-                    <div class="flex justify-between items-center mb-2">
-                        <label for="angle-slider" class="block text-sm font-medium text-slate-500 dark:text-slate-400">Angle</label>
-                        <span id="angle-value" class="text-sm font-mono bg-slate-100 dark:bg-slate-900 px-2 py-1 rounded-md text-slate-800 dark:text-white">90°</span>
+                <div class="tool-block">
+                    <div class="tool-angle-row">
+                        <label for="angle-slider" class="tool-label">Angle</label>
+                        <span id="angle-value" class="tool-angle-value">90&deg;</span>
                     </div>
-                    <input type="range" id="angle-slider" min="0" max="360" value="90" class="w-full">
+                    <input type="range" id="angle-slider" min="0" max="360" value="90" class="tool-angle-slider">
                 </div>
 
-                <!-- Code Output -->
                 <div>
-                    <label for="css-code" class="block text-sm font-medium text-slate-500 dark:text-slate-400 mb-2">Generated CSS</label>
-                    <div class="relative">
-                        <textarea id="css-code" readonly class="w-full h-28 bg-slate-50 dark:bg-slate-900 text-slate-700 dark:text-slate-300 font-mono text-sm rounded-md p-3 pr-10 border border-slate-300 dark:border-slate-600 resize-none"></textarea>
-                        <button id="copy-code" class="absolute top-2 right-2 text-slate-400 hover:text-slate-700 dark:hover:text-white transition-colors" title="Copy CSS">
-                             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
+                    <label for="css-code" class="tool-label">Generated CSS</label>
+                    <div class="tool-code-wrap">
+                        <textarea id="css-code" readonly class="crusher-tool-control"></textarea>
+                        <button id="copy-code" type="button" class="tool-copy-btn" title="Copy CSS" aria-label="Copy CSS">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true">
                                 <path fill-rule="evenodd" d="M4 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V2Zm2-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H6ZM2 5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1h1v1a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h1v1H2Z"/>
-                             </svg>
+                            </svg>
                         </button>
-                         <span id="copy-feedback" class="absolute bottom-2 right-2 text-xs text-emerald-500 dark:text-emerald-400"></span>
+                        <span id="copy-feedback" class="tool-copy-feedback"></span>
                     </div>
                 </div>
-            </div>
+            </section>
 
-            <!-- Preview Panel -->
-            <div id="gradient-preview" class="w-full h-64 lg:h-full rounded-xl shadow-lg border-2 border-slate-200 dark:border-slate-700 transition-all duration-300"></div>
+            <div id="gradient-preview"></div>
         </div>
-    </div>
+    </main>
+
+    <a href="https://tools.muhammadhassaanjaved.com/" id="hub-bubble" class="crusher-tool-fab" title="View All Tools" target="_blank" rel="noopener noreferrer">
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="3" y="3" width="7" height="7"></rect>
+            <rect x="14" y="3" width="7" height="7"></rect>
+            <rect x="14" y="14" width="7" height="7"></rect>
+            <rect x="3" y="14" width="7" height="7"></rect>
+        </svg>
+    </a>
+
+    <template id="remove-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true">
+            <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+            <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+        </svg>
+    </template>
+
+    <crusher-style-switcher
+      default-theme="minimal"
+      default-brand="#0ea5e9"
+      hide-themes
+      hide-theme-color></crusher-style-switcher>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/crusher-ui-kit@0.1.6/dist/crusher-ui.standalone.esm.js"></script>
 
     <script>
         // DOM Elements
@@ -251,33 +183,51 @@
         const cssCode = document.getElementById('css-code');
         const copyCodeBtn = document.getElementById('copy-code');
         const copyFeedback = document.getElementById('copy-feedback');
+        const removeIconTpl = document.getElementById('remove-icon');
 
         // Initial State
         let colors = [
-            { id: Date.now() + 1, value: '#818cf8' }, // Indigo 400
-            { id: Date.now() + 2, value: '#38bdf8' }  // Sky 400
+            { id: Date.now() + 1, value: '#818cf8' },
+            { id: Date.now() + 2, value: '#38bdf8' }
         ];
         let angle = 90;
 
-        // --- Functions ---
+        function buildColorStop(color) {
+            const row = document.createElement('div');
+            row.className = 'tool-color-stop';
+
+            const swatch = document.createElement('input');
+            swatch.type = 'color';
+            swatch.value = color.value;
+            swatch.dataset.id = String(color.id);
+            swatch.className = 'color-input tool-color-swatch';
+
+            const hex = document.createElement('input');
+            hex.type = 'text';
+            hex.value = color.value;
+            hex.dataset.id = String(color.id);
+            hex.className = 'hex-input crusher-tool-control tool-color-hex';
+
+            const remove = document.createElement('button');
+            remove.type = 'button';
+            remove.dataset.id = String(color.id);
+            remove.className = 'remove-color tool-color-remove';
+            remove.title = 'Remove Color';
+            remove.setAttribute('aria-label', 'Remove Color');
+            if (colors.length <= 2) remove.hidden = true;
+            remove.appendChild(removeIconTpl.content.cloneNode(true));
+
+            row.appendChild(swatch);
+            row.appendChild(hex);
+            row.appendChild(remove);
+            return row;
+        }
 
         function renderColorStops() {
-            colorsContainer.innerHTML = '';
-            colors.forEach(color => {
-                const stopElement = document.createElement('div');
-                stopElement.classList.add('flex', 'items-center', 'gap-3');
-                stopElement.innerHTML = `
-                    <input type="color" value="${color.value}" data-id="${color.id}" class="color-input w-12 h-12">
-                    <input type="text" value="${color.value}" data-id="${color.id}" class="hex-input flex-grow bg-slate-100 dark:bg-slate-700 text-slate-800 dark:text-white rounded-md p-2 border border-slate-300 dark:border-slate-600 focus:outline-none focus:ring-1 focus:ring-sky-500">
-                    <button data-id="${color.id}" class="remove-color text-slate-400 dark:text-slate-500 hover:text-red-500 dark:hover:text-red-400 p-2 ${colors.length <= 2 ? 'invisible' : ''}" title="Remove Color">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
-                          <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
-                          <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
-                        </svg>
-                    </button>
-                `;
-                colorsContainer.appendChild(stopElement);
-            });
+            colorsContainer.replaceChildren();
+            for (const color of colors) {
+                colorsContainer.appendChild(buildColorStop(color));
+            }
             attachColorEventListeners();
         }
 
@@ -313,7 +263,7 @@
                 generateGradient();
             }
         }
-        
+
         function attachColorEventListeners() {
             document.querySelectorAll('.color-input').forEach(input => {
                 input.addEventListener('input', (e) => updateColor(Number(e.target.dataset.id), e.target.value));
@@ -325,13 +275,11 @@
                     }
                 });
             });
-             document.querySelectorAll('.remove-color').forEach(button => {
-                 button.addEventListener('click', (e) => removeColor(Number(e.currentTarget.dataset.id)));
-             });
+            document.querySelectorAll('.remove-color').forEach(button => {
+                button.addEventListener('click', (e) => removeColor(Number(e.currentTarget.dataset.id)));
+            });
         }
 
-
-        // --- Event Listeners ---
         angleSlider.addEventListener('input', (e) => {
             angle = e.target.value;
             generateGradient();
@@ -339,145 +287,19 @@
 
         addColorBtn.addEventListener('click', addColor);
 
-        copyCodeBtn.addEventListener('click', () => {
-            cssCode.select();
-            document.execCommand('copy');
+        copyCodeBtn.addEventListener('click', async () => {
+            try {
+                await navigator.clipboard.writeText(cssCode.value);
+            } catch {
+                cssCode.select();
+                document.execCommand('copy');
+            }
             copyFeedback.textContent = 'Copied!';
-            setTimeout(() => {
-                copyFeedback.textContent = '';
-            }, 2000);
+            setTimeout(() => { copyFeedback.textContent = ''; }, 2000);
         });
 
-        // --- Initial Load ---
         renderColorStops();
         generateGradient();
-
-        // Theme Toggle Logic
-        const themeToggleBtn = document.getElementById('theme-toggle');
-        const sunIcon = document.getElementById('theme-toggle-sun-icon');
-        const moonIcon = document.getElementById('theme-toggle-moon-icon');
-
-        const updateIcons = () => {
-            if (document.documentElement.classList.contains('dark')) {
-                sunIcon.classList.remove('hidden');
-                moonIcon.classList.add('hidden');
-            } else {
-                sunIcon.classList.add('hidden');
-                moonIcon.classList.remove('hidden');
-            }
-        };
-
-        themeToggleBtn.addEventListener('click', () => {
-            document.documentElement.classList.toggle('dark');
-            if (document.documentElement.classList.contains('dark')) {
-                localStorage.theme = 'dark';
-            } else {
-                localStorage.theme = 'light';
-            }
-            updateIcons();
-        });
-
-        updateIcons();
     </script>
-    
-    <!-- Floating Hub Button Snippet -->
-    <a href="https://tools.muhammadhassaanjaved.com/" id="hub-bubble" title="View All Tools" target="_blank" rel="noopener noreferrer">
-        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="3" y="3" width="7" height="7"></rect>
-            <rect x="14" y="3" width="7" height="7"></rect>
-            <rect x="14" y="14" width="7" height="7"></rect>
-            <rect x="3" y="14" width="7" height="7"></rect>
-        </svg>
-    </a>
-    <!-- End of Snippet -->
-    <crusher-style-switcher default-theme="minimal" hide-themes hide-theme-color></crusher-style-switcher>
-    <script id="crusher-minimal-mode-lock">
-      (() => {
-        const root = document.documentElement;
-        const CONTRACT_VERSION = 'style-switcher-v3';
-        const DEFAULT_BRAND = '#0ea5e9';
-        const SWITCHER_COLORS = {
-          sky: '#0ea5e9',
-          emerald: '#10b981',
-          violet: '#8b5cf6',
-          orange: '#f97316',
-          pink: '#ec4899'
-        };
-        const readPrefs = () => {
-          try { return JSON.parse(localStorage.getItem('crusher_prefs') || '{}'); } catch { return {}; }
-        };
-        const writePrefs = (prefs) => {
-          try { localStorage.setItem('crusher_prefs', JSON.stringify(prefs)); } catch {}
-        };
-        const normalizeMode = (mode) => mode === 'dark' ? 'dark' : 'light';
-        const ensurePrefs = (forcedMode) => {
-          const prefs = readPrefs();
-          const currentContract = (() => { try { return localStorage.getItem('crusher_tools_mode_contract'); } catch { return ''; } })();
-          if (currentContract !== CONTRACT_VERSION) {
-            prefs.mode = 'light';
-            try { localStorage.setItem('crusher_tools_mode_contract', CONTRACT_VERSION); } catch {}
-          } else if (forcedMode === 'dark' || forcedMode === 'light') {
-            prefs.mode = forcedMode;
-          } else {
-            prefs.mode = normalizeMode(prefs.mode);
-          }
-          prefs.theme = 'minimal';
-          if (!prefs.brand) prefs.brand = DEFAULT_BRAND;
-          try { localStorage.theme = prefs.mode; } catch {}
-          writePrefs(prefs);
-          return prefs;
-        };
-        const sync = (forcedMode) => {
-          const prefs = ensurePrefs(forcedMode);
-          root.setAttribute('data-theme', 'minimal');
-          root.setAttribute('data-theme-lock', 'minimal');
-          root.setAttribute('data-mode', prefs.mode);
-          root.classList.toggle('dark', prefs.mode === 'dark');
-          root.style.setProperty('--crusher-color-brand-primary', prefs.brand || DEFAULT_BRAND);
-        };
-        const patchSwitcher = async () => {
-          await customElements.whenDefined('crusher-style-switcher');
-          const switcher = document.querySelector('crusher-style-switcher');
-          if (!switcher) return;
-          switcher.hideThemes = true;
-          switcher.hideThemeColor = true;
-          switcher.colors = SWITCHER_COLORS;
-          switcher._cacheSwatchColors?.();
-          switcher.requestUpdate?.();
-          await switcher.updateComplete?.catch?.(() => {});
-          const applyShadowFixes = () => {
-            const shadow = switcher.shadowRoot;
-            if (!shadow) return;
-            shadow.querySelectorAll('button').forEach((button) => { button.style.cursor = 'pointer'; });
-            shadow.querySelectorAll('.colors').forEach((row) => {
-              row.style.flexWrap = 'nowrap';
-              row.style.justifyContent = 'flex-start';
-              row.style.gap = '0.45rem';
-            });
-            shadow.querySelectorAll('.swatch').forEach((swatch) => {
-              swatch.style.inlineSize = '1.65rem';
-              swatch.style.blockSize = '1.65rem';
-              swatch.style.flex = '0 0 auto';
-              swatch.style.cursor = 'pointer';
-            });
-          };
-          applyShadowFixes();
-          const originalRequestUpdate = switcher.requestUpdate?.bind(switcher);
-          if (originalRequestUpdate && !switcher.__crusherToolsPatched) {
-            switcher.__crusherToolsPatched = true;
-            switcher.requestUpdate = (...args) => {
-              const result = originalRequestUpdate(...args);
-              requestAnimationFrame(applyShadowFixes);
-              return result;
-            };
-          }
-        };
-        sync();
-        window.addEventListener('crusher:themechange', (event) => sync(event.detail?.mode));
-        document.getElementById('theme-toggle')?.addEventListener('click', () => requestAnimationFrame(() => sync()));
-        patchSwitcher();
-      })();
-    </script>
-    <script type="module" src="https://cdn.jsdelivr.net/npm/crusher-ui-kit@0.1.3/dist/crusher-ui.standalone.esm.js"></script>
 </body>
 </html>

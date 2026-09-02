@@ -1,30 +1,25 @@
-# **CSS Gradient Generator**
+# CSS Gradient Generator
 
-A visual web tool to create, customize, and copy linear CSS gradients in real-time. Perfect for designers and developers looking to create beautiful backgrounds.
+Build CSS linear, radial and conic gradients on a sky at dusk: the sky is the gradient, a sun dragged along its arc sets the angle (or the centre for radial and conic), colour bands are the stops with colour, slider and percent, presets carry real twilight orderings (golden hour, civil dusk, Belt of Venus, nautical, astronomical, noon, storm), plus random dusk and reverse; the CSS is written out with one-click copy. Nothing uploaded.
 
----
+Live: <https://crusher-labs.github.io/css-gradient-generator/>
 
-## **Features**
+## The world: Dusk sky
 
-* **Live Preview:** See your gradient masterpiece update instantly as you adjust controls.
-* **Multi-Stop Gradients:** Start with two colors and add as many more as you need.
-* **Angle Control:** Easily change the direction of the gradient with a simple slider.
-* **Copy & Go:** Generates the cross-browser CSS code for you, ready to be copied with one click.
-* **Interactive UI:** Add, remove, and change colors directly with color pickers and hex inputs.
+This tool is a **world page** (crusher-labs standard since 2026-09-02): the page is a committed physical object from the tool's own world, with its own CSS, fonts and mode. It does not load `crusher-ui-kit` and has no theme switcher. The brief for this world lives in the workspace atlas (`x:/crusher-labs/docs/context/tools-theme-atlas.md`); change the atlas before changing the world.
 
----
+## Privacy
 
-## **How to Use**
+This tool runs entirely in your browser. There is no server. No data is uploaded, no telemetry, no analytics. The only network requests fired are the page-load fetches for Google Fonts; your inputs and outputs never leave the tab. The "Suggest an improvement" form posts to Web3Forms only when you submit it.
 
-1. **Open the Tool:** Navigate to the live URL.
-2. **Adjust Colors:** Use the color pickers or type in HEX codes to change the gradient colors.
-3. **Add/Remove Colors:** Click “+ Add Color” to add a new stop, or the trash icon to remove one.
-4. **Change Angle:** Drag the angle slider to rotate the gradient.
-5. **Copy CSS:** Click the copy icon in the CSS output box to grab the code for your project.
+## Contract
 
----
+Validated by `tools-hub/scripts/check-static.mjs` (world-page contract: SEO block, CSP, feedback form, hub link, prose + FAQ, no kit pins). Run `npm run check:static` from `repos/tools-hub` before committing.
 
-## **Live Tool**
+## Development
 
-You can access the live tool here:
-👉 [**CSS Gradient Generator**](https://crusher-labs.github.io/css-gradient-generator/)
+Open `index.html` directly in a browser. No build, no dependencies. Verify at 1440 and 390 via Playwright `setViewportSize` before shipping.
+
+## License
+
+MIT.
